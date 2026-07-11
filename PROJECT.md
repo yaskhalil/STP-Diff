@@ -9,7 +9,7 @@ Targeting publication.
 **Title:** STP-Diff: Differentiable Adversarial Discovery of Regulatory Vulnerabilities in Gene Circuits via Semi-Tensor Product Mapping
 
 Key results:
-- 2,563× measured speedup over explicit STP at N=15 (theoretical bound 52,429× at N=20)
+- 1,637× measured speedup over explicit STP at N=15 (theoretical bound 52,429× at N=20)
 - Identified Rb-E2F axis as primary vulnerability bottleneck in mammalian cell cycle
 - Verified against DepMap Public 25Q3 CRISPR knockout data across 1000+ cell lines
 - ε_critical ≈ 2.80 for p53-Mdm2 circuit

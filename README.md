@@ -10,7 +10,7 @@ The paper is in [`papers/stp-diff-paper.tex`](papers/stp-diff-paper.tex).
 
 **Key results:**
 - Reduces complexity from O(4^N) to O(N·2^N)
-- Estimated 353× speedup at N=20
+- 1,637× measured speedup at N=15 (theoretical bound 52,429× at N=20)
 - Identified Rb-E2F axis as the primary vulnerability bottleneck in a 10-node mammalian cell cycle model
 - Validated against DepMap Public 25Q3 CRISPR knockout data (1000+ cell lines)
 - ε_critical ≈ 2.80 for the p53-Mdm2 DNA-damage circuit
