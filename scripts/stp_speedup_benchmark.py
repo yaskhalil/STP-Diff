@@ -140,10 +140,14 @@ def benchmark_n(n, device='cpu', num_trials=10):
         t0 = time.perf_counter()
         for _ in range(num_trials):
             _ = Lt @ x
+            _ = Lt.T @ x  # backward pass (L^T @ grad)
         torch.cuda.synchronize() if device == 'cuda' else None
-        t_exp = (time.perf_counter() - t0) / num_trials
-        exp_speedup = t_exp / t_impl if t_impl > 0 else float('inf')
-        print(f"explicit={t_exp*1000:.1f}ms speedup={exp_speedup:.1f}x", flush=True)
+        t_exp_fwd = (time.perf_counter() - t0) / num_trials
+        
+        # Total explicit time = build (one-time) + forward + backward
+        t_exp = t_build + t_exp_fwd
+        exp_speedup = (t_exp / t_impl) if t_impl > 0 else float('inf')
+        print(f"explicit_total={t_exp*1000:.1f}ms (build={t_build*1000:.1f}ms + fwd+bwd={t_exp_fwd*1000:.1f}ms) speedup={exp_speedup:.1f}x", flush=True)
     else:
         # Theoretical: explicit requires O(4^N) which is infeasible
         exp_speedup = (4 ** n) / (n * 2 ** n)
