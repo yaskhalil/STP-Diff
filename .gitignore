@@ -1,0 +1,37 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.blg
+*.bbl
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.run.xml
+*.bcf
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Environment
+.env
+.venv
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temp / results
+temp/
+
+# STP-GNN — separate repo (clone independently)
+/STP-GNN/
