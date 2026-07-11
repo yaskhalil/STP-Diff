@@ -56,7 +56,7 @@
 
 \begin{abstract}
 \noindent
-The discovery of regulatory vulnerabilities in Gene Regulatory Networks (GRNs) is central to computational oncology, yet remains computationally intractable for networks exceeding 15--20 nodes due to exponential state-space explosion. We introduce STP-Diff, a framework that transforms discrete Boolean network dynamics into a differentiable manifold via Semi-Tensor Product (STP) mapping with an implicit Vector-Jacobian Product (VJP) operator. This reduces theoretical complexity from $O(4^N)$ to $O(N \cdot 2^N)$, achieving an estimated 353$\times$ speedup at $N=20$ without numerical approximation. Using Projected Gradient Descent (PGD) attacks, we identify the Rb-E2F axis as the primary vulnerability bottleneck in a 10-node mammalian cell cycle model, a finding validated against CRISPR-Cas9 knockout data from the Broad Institute DepMap (25Q3, 1000+ cell lines). We further quantify network resilience through Epsilon-Critical search, establishing $\epsilon_{\text{critical}} \approx 2.80$ for the p53-Mdm2 DNA-damage circuit. These results show that gradient-based adversarial optimization over algebraic state spaces can reliably expose biological control points invisible to single-node knockout analysis.
+The discovery of regulatory vulnerabilities in Gene Regulatory Networks (GRNs) is central to computational oncology, yet remains computationally intractable for networks exceeding 15--20 nodes due to exponential state-space explosion. We introduce STP-Diff, a framework that transforms discrete Boolean network dynamics into a differentiable manifold via Semi-Tensor Product (STP) mapping with an implicit Vector-Jacobian Product (VJP) operator. This reduces theoretical complexity from $O(4^N)$ to $O(N \cdot 2^N)$, with a measured 71$\times$ speedup at $N=15$ (wall-clock, including explicit matrix construction) and a theoretical bound of $52\,429\times$ at $N=20$. Using Projected Gradient Descent (PGD) attacks, we identify the Rb-E2F axis as the primary vulnerability bottleneck in a 10-node mammalian cell cycle model, a finding validated against CRISPR-Cas9 knockout data from the Broad Institute DepMap (25Q3, 1000+ cell lines). We further quantify network resilience through Epsilon-Critical search, establishing $\epsilon_{\text{critical}} \approx 2.80$ for the p53-Mdm2 DNA-damage circuit. These results show that gradient-based adversarial optimization over algebraic state spaces can reliably expose biological control points invisible to single-node knockout analysis.
 \end{abstract}
 
 \section{Introduction}
@@ -170,7 +170,7 @@ The forward pass performs $N$ matrix-vector products ($O(N \cdot 2^N)$) and $N-1
 
 \begin{table}[ht]
 \centering
-\caption{Complexity comparison between explicit STP and the implicit VJP approach. The VJP memory entry refers to runtime memory (state vector $x(t) \in \mathbb{R}^{2^N}$). Parameter storage for the logit matrices $\Theta_i \in \mathbb{R}^{2 \times 2^N}$ adds $O(N \cdot 2^N)$ to total memory footprint. $^\dagger$Estimated speedup; see \S\ref{sec:scaling} for details.}
+\caption{Complexity comparison between explicit STP and the implicit VJP approach. The VJP memory entry refers to runtime memory (state vector $x(t) \in \mathbb{R}^{2^N}$). Parameter storage for the logit matrices $\Theta_i \in \mathbb{R}^{2 \times 2^N}$ adds $O(N \cdot 2^N)$ to total memory footprint. $^\dagger$Measured at $N=15$ (largest feasible explicit matrix); theoretical bound at $N=20$ is $52\,429\times$; see \S\ref{sec:scaling} for details.}
 \label{tab:complexity}
 \begin{tabular}{lcc}
 \toprule
@@ -178,7 +178,7 @@ The forward pass performs $N$ matrix-vector products ($O(N \cdot 2^N)$) and $N-1
 \midrule
 Time complexity  & $O(4^N)$          & $O(N \cdot 2^N)$ \\
 Memory complexity & $O(4^N)$         & $O(2^N)$ \\
-Speedup at $N=20$ & 1$\times$ (baseline) & \textbf{353$\times$}$^\dagger$ \\
+Speedup at $N=15$ & 1$\times$ (baseline) & \textbf{71$\times$}$^\dagger$ \\
 Theoretical speedup at $N=30$ & 1$\times$ & $\sim 10^5\times$ \\
 \bottomrule
 \end{tabular}
@@ -201,7 +201,7 @@ The attack runs for $K$ iterations with step size $\alpha = 0.1$, simulating $T 
 \subsection{Computational Benchmarking}
 \label{sec:benchmarking}
 
-We compared STP-Diff against an explicit STP estimate across network sizes $N \in \{3, 5, 7, 10,$ $15, 20\}$. Both implementations used identical Boolean rules for a randomly generated 10-node network. Timing was averaged over ten forward-backward passes on an Apple M4 Max.
+We compared STP-Diff against an explicit STP implementation across network sizes $N \in \{3, 5, 7, 10, 12, 15\}$ (the explicit $2^N \times 2^N$ matrix exceeds available memory for $N \geq 20$). Both implementations used identical Boolean rules for a randomly generated 10-node network. Timing was averaged over ten forward-backward passes on an Apple M4 Max.
 
 \begin{figure}[H]
 \centering
@@ -213,7 +213,7 @@ We compared STP-Diff against an explicit STP estimate across network sizes $N \i
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{../outputs/speedup_comparison.png}
-\caption{Runtime comparison at $N=20$. STP-Diff achieves an estimated 353$\times$ speedup over explicit STP (see \S\ref{sec:scaling} for discussion).}
+\caption{Runtime comparison. STP-Diff achieves 71$\times$ measured speedup over explicit STP at $N=15$, with explicit STP becoming infeasible at $N \geq 20$ (see \S\ref{sec:scaling} for discussion).}
 \label{fig:speedup}
 \end{figure}
 
@@ -310,7 +310,7 @@ To verify that STP-Diff's \textit{in silico} predictions reflect biological real
 
 \textbf{Boolean Network Analysis.} Faur\'e et al.~\cite{faure2006dynamical} performed exhaustive state-space analysis of a 10-node mammalian cell cycle model, identifying stable attractors but noting the exponential blowup for larger networks. Shmulevich et al.~\cite{shmulevich2002probabilistic} introduced PBNs to model stochastic gene expression, though their inference cost scales exponentially with node count. Tools like GinSIM~\cite{naldi2009logical} provide simulation environments but do not offer optimization-based vulnerability discovery.
 
-\textbf{Semi-Tensor Product Methods.} Cheng et al.~\cite{cheng2011analysis} established the algebraic framework for STP-based BN analysis. Cheng and Qi~\cite{cheng2010controllability} derived controllability conditions for STP Boolean networks, showing theoretical pathways for network intervention. Cheng and Zhang~\cite{cheng2025semi} recently extended STP to convolutional neural networks, but their method does not address the matrix explosion problem.
+\textbf{Semi-Tensor Product Methods.} Cheng et al.~\cite{cheng2011analysis} established the algebraic framework for STP-based BN analysis. Cheng and Qi~\cite{cheng2010controllability} derived controllability conditions for STP Boolean networks, showing theoretical pathways for network intervention. Mazumdar~\cite{mazumdar2020control} further extended STP-based control to Boolean networks with state-dependent derivatives. Cheng et al.~\cite{cheng2023hypermatrices} recently generalized STP to hypermatrices, broadening the algebraic foundation. Most recently, Cheng and Zhang~\cite{cheng2025semi} applied STP to convolutional neural networks, but none of these approaches address the matrix explosion problem that limits STP to $N \lesssim 10$.
 
 \textbf{GNNs for Systems Biology.} Kipf \& Welling~\cite{kipf2017semi} introduced Graph Convolutional Networks applied to drug sensitivity prediction. Geng et al.~\cite{geng2026logicxgnn} proposed LogicXGNN for extracting logical rules from trained GNNs. Neither provides a mechanism for adversarial vulnerability discovery in discrete networks.
 
@@ -326,7 +326,7 @@ The $O(N \cdot 2^N)$ complexity is a fundamental improvement over $O(4^N)$ for e
 
 The method is practical for $N \leq 25$ on GPU hardware with 80 GB memory (e.g., NVIDIA H100). For larger networks, sparse tensor representations or Monte Carlo sampling of the Kronecker product dimensions would be necessary.
 
-\textbf{Empirical vs. theoretical speedup.} The theoretical speedup of the VJP operator over explicit STP is $O(4^N) \,/\, O(N \cdot 2^N) = 2^N / N$, or approximately $52\,429\times$ at $N=20$. The measured $353\times$ speedup (Table~\ref{tab:complexity}) is an estimate against an idealized baseline, since explicit STP requires $O(4^N)$ memory and cannot be run at $N=20$ (the $2^N \times 2^N$ transition matrix would require 4~TB). The gap between $353\times$ and the theoretical $52\,429\times$ arises because the VJP forward pass executes $N-1$ sequential Kronecker products ($\otimes$) plus $N$ matrix-vector products in separate ``torch'' operations; GPU kernel launch overhead dominates on small tensors (the $2^N$ state vector is only 8~MB at $N=20$). This gap is expected to narrow at larger $N$ where tensor operations saturate the GPU, approaching the asymptotic bound.
+\textbf{Empirical vs. theoretical speedup.} The theoretical speedup of the VJP operator over explicit STP is $O(4^N) \,/\, O(N \cdot 2^N) = 2^N / N$, or approximately $52\,429\times$ at $N=20$. Our benchmark measures $71\times$ at $N=15$ (Table~\ref{tab:complexity}), the largest size where the explicit $2^N \times 2^N$ transition matrix (1\,B elements, 4\,GB) fits in memory. At $N=20$, the explicit matrix would require 4~TB and cannot be constructed. The gap between the $71\times$ measurement and the theoretical bound arises because the VJP forward pass executes $N-1$ sequential Kronecker products ($\otimes$) plus $N$ matrix-vector products in separate ``torch'' operations; Python-level autograd overhead and GPU kernel launch costs dominate at smaller tensor sizes. At $N=20$, the $2^N$ state vector (8~MB) is still small enough that launch overhead is significant; the gap should narrow at larger $N$ as the tensor operations saturate available compute.
 
 \subsection{Limitations of the Continuous Relaxation}
 \label{sec:limitations}
@@ -343,7 +343,7 @@ The Rb-E2F axis is a well-characterized tumor suppressor pathway. Rb loss is one
 
 STP-Diff shows that gradient-based adversarial optimization over algebraic state spaces can reliably identify regulatory vulnerabilities in Boolean gene networks. Combining the algebraic rigor of Semi-Tensor Products with the scalability of implicit autodiff operators, we achieve:
 \begin{itemize}[leftmargin=*]
-    \item \textbf{Estimated 353$\times$ speedup} over explicit STP methods at $N=20$;
+    \item \textbf{Up to 71$\times$ measured speedup} over explicit STP methods (71$\times$ at $N=15$, theoretical bound $52\,429\times$ at $N=20$);
     \item \textbf{Empirically validated predictions} -- the Rb-E2F vulnerability is corroborated by CRISPR-Cas9 data from 1000+ cancer cell lines;
     \item \textbf{Quantitative resilience metrics} -- $\epsilon_{\text{critical}}$ provides a single-number measure of network robustness.
 \end{itemize}
