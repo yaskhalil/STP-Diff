@@ -165,13 +165,16 @@ The implicit VJP forward pass requires $O(N \cdot 2^N)$ time and $O(2^N)$ memory
 \end{theorem}
 
 \begin{proof}
+\renewcommand{\qedsymbol}{}
 The forward pass performs $N$ matrix-vector products ($O(N \cdot 2^N)$) and $N-1$ Kronecker products of exponentially growing vectors ($\sum_{k=1}^{N-1} 2^{k+1} = O(2^N)$). The backward pass performs $N$ dimensional contractions, each contracting a $2^N$-element tensor with a $2^{N-1}$- element vector, for $O(N \cdot 2^N)$ total.
 \end{proof}
 
 \begin{table}[ht]
 \centering
 \caption{Complexity comparison between explicit STP and the implicit VJP approach. The VJP memory entry refers to runtime memory (state vector $x(t) \in \mathbb{R}^{2^N}$). Parameter storage for the logit matrices $\Theta_i \in \mathbb{R}^{2 \times 2^N}$ adds $O(N \cdot 2^N)$ to total memory footprint. $^\dagger$Measured at $N=15$ (includes explicit matrix construction); theoretical bound at $N=20$ is $52\,429\times$; see \S\ref{sec:scaling} for details.}
+
 \label{tab:complexity}
+
 \begin{tabular}{lcc}
 \toprule
 \textbf{Metric} & \textbf{Explicit STP} & \textbf{STP-Diff (VJP)} \\
