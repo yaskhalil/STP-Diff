@@ -355,7 +355,13 @@ STP-Diff shows that gradient-based adversarial optimization over algebraic state
 
 The framework is general: any Boolean network expressable as a set of logical rules can be analyzed with this pipeline. Future work will extend the approach to exploit native sparsity in biological circuits — since each gene typically has only $k_i \ll N$ regulators, the structure matrices can be restricted to $\mathbb{R}^{2 \times 2^{k_i}}$ rather than $\mathbb{R}^{2 \times 2^N}$, bypassing the $2^N$ explosion entirely for sparse local networks. Combined with sparse tensor representations, this targets $N \geq 50$. Multi-target adversarial objectives that model combination therapies are another direction.
 
-The author thanks the Broad Institute DepMap consortium for public access to CRISPR knockout data. AI-assisted language tools were used for formatting and prose refinement.
+\section*{Acknowledgments}
+
+\paragraph{Author Contributions.} \textbf{Yaseen Khalil} conceived the core methodology, developed the implicit VJP operator and the differentiable STP framework, implemented all code and experimental scripts, conducted the computational experiments and benchmarking, performed the DepMap validation analysis, interpreted the results, and prepared the manuscript. \textbf{Pavel Kraikivski} and \textbf{Agnieszka Miedlar} jointly defined the project scope and research objectives, determined the biological datasets and validation strategy, supervised the research direction, and provided critical review, mentoring, and feedback throughout the project.
+
+\paragraph{Data.} The authors thank the Broad Institute DepMap consortium (Public 25Q3) for public access to CRISPR-Cas9 knockout data.
+
+\paragraph{Declaration.} AI-assisted language tools were used for formatting and prose refinement. All technical content, analysis, and conclusions remain the authors' original work.
 
 \bibliography{references}
 

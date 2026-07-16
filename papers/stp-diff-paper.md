@@ -242,7 +242,11 @@ The framework is general: any Boolean network expressable as a set of logical ru
 
 ## Acknowledgments
 
-The author thanks the Broad Institute DepMap consortium for public access to CRISPR knockout data. AI-assisted language tools were used for formatting and prose refinement.
+**Author Contributions.** **Yaseen Khalil** conceived the core methodology, developed the implicit VJP operator and the differentiable STP framework, implemented all code and experimental scripts, conducted the computational experiments and benchmarking, performed the DepMap validation analysis, interpreted the results, and prepared the manuscript. **Pavel Kraikivski** and **Agnieszka Miedlar** jointly defined the project scope and research objectives, determined the biological datasets and validation strategy, supervised the research direction, and provided critical review, mentoring, and feedback throughout the project.
+
+**Data.** The authors thank the Broad Institute DepMap consortium (Public 25Q3) for public access to CRISPR-Cas9 knockout data.
+
+**Declaration.** AI-assisted language tools were used for formatting and prose refinement. All technical content, analysis, and conclusions remain the authors' original work.
 
 ---
 
